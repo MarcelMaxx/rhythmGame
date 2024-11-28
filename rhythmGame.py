@@ -21,14 +21,14 @@ GRAY = (169, 169, 169)
 
 # Game configurations
 KEYS = ['D', 'F', 'J', 'K']
-GAME_DURATION = 120  # 2 minutes
-LEVELS = 7
-NOTE_WIDTH = 50
-NOTE_HEIGHT = 100
+GAME_DURATION = 70 # Seconds
+LEVELS = 5
+NOTE_WIDTH = 80
+NOTE_HEIGHT = 40
 HIT_LINE_Y = WINDOW_HEIGHT - 100
 BASIC_SPEED = 2
-LEVEL_SPEED_ACCR = 1
-
+LEVEL_SPEED_ACCR = 3.5
+SPAWN_INTERVAL = 0.6 #1.0
 class Note:
     """Note class representing falling blocks."""
     def __init__(self, lane: int, speed: float, y: float = 0):
@@ -257,13 +257,13 @@ class NoteGenerator:
         self.difficulty_manager = difficulty_manager
         self.notes: List[Note] = []
         self.last_spawn_time = 0
-        self.spawn_interval = 1.0  # Initial spawn interval
+        self.spawn_interval = SPAWN_INTERVAL # Initial spawn interval
 
     def update(self, current_time: float) -> None:
         """Update note generation."""
         speed = self.difficulty_manager.get_speed(current_time)
         # Adjust spawn interval based on speed
-        self.spawn_interval = max(0.5, 2.0 - speed / 5.0)
+        #[Optional] self.spawn_interval = max(0.5, 2.0 - speed / 5.0)
         if current_time - self.last_spawn_time >= self.spawn_interval:
             lane = random.randint(0, len(KEYS) - 1)
             self.notes.append(Note(lane, speed))
@@ -603,11 +603,10 @@ class Game:
     def show_feedback(self, skipped=False):
         """Display feedback questionnaire."""
         questions = [
-            "Game satisfaction (1-5):",
-            "Enjoyment level (1-5):",
-            "Frustration level (1-5):"
+            "Sense of satisfaction (1-5):",
+            "Sense of accomplishment (1-5):",
+            "Sense of frustration (1-5):"
         ]
-
         answers = []
         current_question = 0
 
