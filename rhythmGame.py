@@ -27,8 +27,10 @@ NOTE_WIDTH = 80
 NOTE_HEIGHT = 40
 HIT_LINE_Y = WINDOW_HEIGHT - 100
 BASIC_SPEED = 2
+BLOCK_SPEED_ACCR = 0.0
 LEVEL_SPEED_ACCR = 3.5
 SPAWN_INTERVAL = 0.6 #1.0
+
 class Note:
     """Note class representing falling blocks."""
     def __init__(self, lane: int, speed: float, y: float = 0):
@@ -54,7 +56,7 @@ class DifficultyManager:
             {'speed': 5.0, 'acceleration': 0.3},  # Level 5: Challenge level
         ]
         '''
-        self.levels = []
+        self.levels = []        # levels is a list, and each element is a dictionary, which contains two key-value pairs: speed and acceleration. Set in set_levels.
         self.current_level = 1
         self.current_speed = 2.0
         self.current_acceleration = 0.0
@@ -66,7 +68,7 @@ class DifficultyManager:
     def set_level(self, level):
         """Set the difficulty for the current level."""
         self.current_level = level
-        if level <= len(self.levels):
+        if level <= len(self.levels): 
             self.current_speed = self.levels[level - 1]['speed']
             self.current_acceleration = self.levels[level - 1]['acceleration']
         else:
@@ -290,21 +292,21 @@ class Game:
         """Initialize game state."""
         self.difficulty_manager = DifficultyManager()
         self.current_level = 1
+        
+        # Generate level speed list (based on mode)
+        levels = []
+        base_speed = BASIC_SPEED
+        for i in range(LEVELS):
+            level_speed = base_speed + i * LEVEL_SPEED_ACCR  # Increase speed for each level
+            levels.append({'speed': level_speed, 'acceleration': BLOCK_SPEED_ACCR})
+            
         if self.mode == 'normal':
             # In normal mode, speed is constant across levels
-            levels = []
-            base_speed = BASIC_SPEED
-            for i in range(LEVELS):
-                level_speed = base_speed + i * LEVEL_SPEED_ACCR  # Increase speed for each level
-                levels.append({'speed': level_speed, 'acceleration': 0.0})
+            pass
+        
         elif self.mode == 'test':
-            # In test mode, random speeds (from a specified range, without repetition, interval of 1)
-            levels = []
-            predefined_speeds = list(range(2, 9))  # Integer list from 2 to 8, interval of 1
-            random.shuffle(predefined_speeds)      # Shuffle to ensure randomness
-
-            # Generate level speed list
-            levels = [{'speed': speed, 'acceleration': 0.0} for speed in predefined_speeds]
+            # In test mode, random speeds shuffled
+            random.shuffle(levels)
 
         else:
             levels = []
@@ -677,4 +679,3 @@ class Game:
 if __name__ == "__main__":
     game = Game()
     game.run()
-
